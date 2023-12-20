@@ -13,7 +13,7 @@ class CustomerRequestsSchema extends Schema {
       table.string('last_name', 80).notNullable()
       table.string('email_address', 254).notNullable()
       table.string('title', 255).notNullable()
-      table.text('message_text').notNullable()
+      table.text('message_text', 1000).defaultTo('').notNullable()
       table.string('file').nullable() // Assuming the file path or name is stored
       table.integer('user_id').unsigned() 
       table.foreign('user_id').references('users.id').onDelete('cascade') 
@@ -28,4 +28,4 @@ class CustomerRequestsSchema extends Schema {
 
 module.exports = CustomerRequestsSchema
 
-module.exports = CustomerRequestsSchema
+

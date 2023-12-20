@@ -1,56 +1,40 @@
-'use strict'
-const User = use('App/Models/User')
+'use strict';
+const User = use('App/Models/User');
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
-
-/**
- * Resourceful controller for interacting with users
- */
 class UserController {
-  /**
-   * Show a list of all users.
-   * GET users
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
-  }
-
-  /**
-   * Render a form to be used for creating a new user.
-   * GET users/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
-
   /**
    * Create/save a new user.
    * POST users
    */
-  async store ({ request, response, params: { id } }) {
+  async store({ request, response }) {
+    try {
+      const { email_address, full_name } = request.post();
 
-    const { email, full_name } = request.post()
+      const user = new User();
+      user.email_address = email_address;
+      user.full_name = full_name;
 
-    const user = new User()
-    user.email = email
-    user.full_name = full_name
+      // Save user
+      await user.save();
 
-    //Save user
-    await user.save()
-     response.json({
-      message: 'Sucessfully created a new User!',
-      data: user
-     })
+      return response.json({
+        message: 'Successfully created a new User!',
+        data: user,
+      });
+    } catch (error) {
+      if (error.code === 'ER_DUP_ENTRY') {
+        return response.status(400).json({
+          message: 'Duplicate entry for email address.',
+          error: error.message,
+        });
+      } else {
+        // Handle other errors
+        return response.status(500).json({
+          message: 'Internal Server Error',
+          error: error.message,
+        });
+      }
+    }
   }
 
   /**
@@ -60,47 +44,23 @@ class UserController {
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
+  async show({ params, response }) {
+    try {
+      const user = await User.findOrFail(params.id);
 
-
-
-  async show ({ params, request, response, view }) {
+      return response.json({
+        message: 'User retrieved successfully.',
+        data: user,
+      });
+    } catch (error) {
+      return response.status(404).json({
+        message: 'User not found',
+        error: error.message,
+      });
+    }
   }
 
-  /**
-   * Render a form to update an existing user.
-   * GET users/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
-   * Update user details.
-   * PUT or PATCH users/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
-  }
-
-  /**
-   * Delete a user with id.
-   * DELETE users/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
-  }
 }
 
-module.exports = UserController
+module.exports = UserController;

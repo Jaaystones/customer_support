@@ -7,7 +7,7 @@ class UserSchema extends Schema {
   up () {
     this.create('users', (table) => {
       table.increments()
-      table.string('email', 254).notNullable().unique()
+      table.string('email_address', 254).notNullable().unique()
       table.string('full_name', 100).notNullable()
       table.timestamps()
     })

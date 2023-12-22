@@ -10,10 +10,10 @@ This is the boilerplate for creating an API server in AdonisJs, it comes pre-con
 
 ## Setup
 
-Use the adonis command to install the blueprint
+Use the adonis command to start server
 
 ```bash
-adonis new yardstick --api-only
+adonis serve --dev
 ```
 
 or manually clone the repo and then run `npm install`.
